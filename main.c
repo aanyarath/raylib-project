@@ -21,15 +21,18 @@ int main(void)
 
     int alienposx = spawnAlienX(); // Initialize the alien's position
     int alienposy = 400;
-    int alienSpeed = 10; // Movement speed of the alien
+    float alienSpeed = 0.25f; // Movement speed of the alien
     bool alienState = false; // State of the alien (true for alive, false for dead)
+
+    int score=0; // Initialize the player's score
 
     
     
     while(!WindowShouldClose())
     {
         DrawText("Use WASD to move the ball", 50, 50, 20, BLUE);
-        
+        DrawText("Press SPACE to shoot", 50, 80, 20, BLUE);
+        DrawText(TextFormat("Score: %d", score), 50, 110, 20, BLUE);
         if (IsKeyPressed(KEY_W)) // Check if the W key is pressed
         {
             playerposy-=movementSpeed;
@@ -74,25 +77,20 @@ int main(void)
                     ClearBackground(RAYWHITE);
                     DrawCircleV((Vector2){alienposx, alienposy}, 10, GREEN);
                     EndDrawing();
+                    score++; // Increment the player's score
                     break; // Exit the bullet movement loop
                 }
             }
             printf("shoot\n");
 
         }
-        
-    
         BeginDrawing(); 
         ClearBackground(RAYWHITE);
-        //alienposx= alienposx + alienSpeed; // Move the alien horizontally
-        /*if (alienposx > screenWidth || alienposx < 0) // Check if the alien goes off-screen
-        {
-            alienSpeed = -alienSpeed; // Reverse the alien's direction
-        }
-        */
         DrawCircleV((Vector2){playerposx, playerposy}, 10, BLUE); // Draw the player as a blue circle
         DrawCircleV((Vector2){alienposx, alienposy}, 10, GREEN); // Draw the alien as a green circle
         EndDrawing();
+        
+    
 
     }
 
@@ -104,4 +102,5 @@ int spawnAlienX(void)
 {
     return 200 + rand() % 400;
 }
+
 
