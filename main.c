@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <raylib.h>
+#include <stdlib.h>
+int spawnAlienX(void);
 
 int main(void)
 {
@@ -11,15 +13,23 @@ int main(void)
 
     int playerposx = 400; // Initialize the player's position at the center of the screen
     int playerposy = 150;
+    int movementSpeed = 10; // Set the movement speed of the player
+
     float bulletposx=0.0f; // Initialize the bullet's position and speed
     float bulletposy=0.0f;
     float bulletspeed=0.25f; 
 
-    int movementSpeed = 5; // Set the movement speed of the player
+    int alienposx = spawnAlienX(); // Initialize the alien's position
+    int alienposy = 400;
+    int alienSpeed = 10; // Movement speed of the alien
+    bool alienState = false; // State of the alien (true for alive, false for dead)
+
+    
     
     while(!WindowShouldClose())
     {
         DrawText("Use WASD to move the ball", 50, 50, 20, BLUE);
+        
         if (IsKeyPressed(KEY_W)) // Check if the W key is pressed
         {
             playerposy-=movementSpeed;
@@ -41,7 +51,7 @@ int main(void)
             printf("right\n");
             playerposx+=movementSpeed;
         }
-        if (IsKeyPressed(KEY_SPACE)) // Check if the ESC key is pressed
+        if (IsKeyPressed(KEY_SPACE))
         {
             DrawCircleV((Vector2){bulletposx, bulletposy}, 5, RED); // Draw the bullet as a red circle
             bulletposx=playerposx;
@@ -53,19 +63,45 @@ int main(void)
                 BeginDrawing(); 
                 ClearBackground(RAYWHITE);
                 DrawCircleV((Vector2){bulletposx, bulletposy}, 5, RED); // Draw the bullet as a red circle
-                DrawCircleV((Vector2){playerposx, playerposy}, 10, BLUE); // Draw the player as a blue circle
+                DrawCircleV((Vector2){playerposx, playerposy}, 10, BLUE); // Draw the player as a blue circlE
                 EndDrawing();
+                if (CheckCollisionCircles((Vector2){bulletposx, bulletposy}, 5, (Vector2){alienposx, 400}, 10)) // Check for collision between the bullet and the alien
+                {
+                    alienState = false; // Set the alien's state to false (dead)
+                    alienposx = spawnAlienX(); // Respawn the alien at a new random position
+                    alienposy = 400; // Reset the alien's y position
+                    BeginDrawing();
+                    ClearBackground(RAYWHITE);
+                    DrawCircleV((Vector2){alienposx, alienposy}, 10, GREEN);
+                    EndDrawing();
+                    break; // Exit the bullet movement loop
+                }
             }
             printf("shoot\n");
 
         }
+        
+    
         BeginDrawing(); 
         ClearBackground(RAYWHITE);
-        DrawCircleV((Vector2){playerposx, playerposy}, 10, BLUE); 
+        //alienposx= alienposx + alienSpeed; // Move the alien horizontally
+        /*if (alienposx > screenWidth || alienposx < 0) // Check if the alien goes off-screen
+        {
+            alienSpeed = -alienSpeed; // Reverse the alien's direction
+        }
+        */
+        DrawCircleV((Vector2){playerposx, playerposy}, 10, BLUE); // Draw the player as a blue circle
+        DrawCircleV((Vector2){alienposx, alienposy}, 10, GREEN); // Draw the alien as a green circle
         EndDrawing();
 
     }
-   
+
     CloseWindow();
     return 0;
 }
+//function to spawn the alien at a random position within a certain range on the screen
+int spawnAlienX(void)
+{
+    return 200 + rand() % 400;
+}
+
